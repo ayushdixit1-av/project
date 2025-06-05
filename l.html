@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Closet / Wardrobe Manager (Prototype)</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Apply Inter font and basic body styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Light blue-gray background */
+            color: #334155; /* Darker text color */
+        }
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #cbd5e1; /* Light gray track */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #64748b; /* Medium gray thumb */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569; /* Darker gray on hover */
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
+        <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-8 sm:mb-10">
+            Digital Closet
+        </h1>
+        <p class="text-center text-gray-600 text-lg mb-6">
+            Your personal wardrobe manager. (Prototype: Data not persistent)
+        </p>
+        <!-- User ID display (mocked for prototype) -->
+        <p id="userIdDisplay" class="text-center text-gray-500 text-xs mb-8 break-all hidden">
+            User ID: <span class="font-mono bg-gray-100 p-1 rounded" id="actualUserId"></span>
+        </p>
+
+        <div class="max-w-7xl mx-auto space-y-8">
+            <!-- Add Clothing Item Section -->
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Add New Clothing Item</h2>
+                <form id="addClothingForm" class="space-y-4">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700">Name:</label>
+                        <input
+                            type="text"
+                            id="name"
+                            required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            placeholder="e.g., Blue T-shirt"
+                        />
+                    </div>
+                    <div>
+                        <label for="type" class="block text-sm font-medium text-gray-700">Type:</label>
+                        <select
+                            id="type"
+                            required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        >
+                            <option value="">Select Type</option>
+                            <!-- Options populated by JavaScript -->
+                        </select>
+                    </div>
+                    <div>
+                        <label for="color" class="block text-sm font-medium text-gray-700">Color:</label>
+                        <input
+                            type="text"
+                            id="color"
+                            required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            placeholder="e.g., Navy, Black, Red"
+                        />
+                    </div>
+                    <div>
+                        <label for="imageUrl" class="block text-sm font-medium text-gray-700">Image URL (optional):</label>
+                        <input
+                            type="url"
+                            id="imageUrl"
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            placeholder="https://example.com/item.jpg"
+                        />
+                    </div>
+                    <div id="addMessage" class="hidden p-3 rounded-lg text-sm"></div>
+                    <div class="flex space-x-3">
+                        <button
+                            type="submit"
+                            id="addItemBtn"
+                            class="flex-1 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Add Item
+                        </button>
+                        <button
+                            type="button"
+                            id="clearFormBtn"
+                            class="flex-1 inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        >
+                            Clear
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Display Clothing Items Section -->
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">My Wardrobe</h2>
+                <div id="displayMessage" class="hidden p-3 rounded-lg text-sm mb-4"></div>
+                <div id="clothingItemsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- Clothing items will be dynamically inserted here by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Outfit Planner Section -->
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center justify-between">
+                    Outfit Planner
+                    <button id="addOutfitBtn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                        New Outfit
+                    </button>
+                </h2>
+                <div id="outfitsMessage" class="hidden p-3 rounded-lg text-sm mb-4"></div>
+                <div id="outfitsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- Outfits will be dynamically inserted here by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Future Sections (e.g., AI suggestions, monetization) -->
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">AI Suggestions & Affiliate Links (Coming Soon!)</h2>
+                <p class="text-gray-600">Get smart outfit recommendations and discover similar clothing items from your favorite brands.</p>
+                <div class="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-md text-gray-500">
+                    Stay tuned for advanced features!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Item Modal -->
+    <div id="editItemModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50 hidden">
+        <div class="relative bg-white p-8 rounded-xl shadow-lg w-full max-w-lg mx-auto border border-gray-200">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Edit Clothing Item</h3>
+            <form id="editClothingForm" class="space-y-4">
+                <input type="hidden" id="editItemId">
+                <div>
+                    <label for="editName" class="block text-sm font-medium text-gray-700">Name:</label>
+                    <input
+                        type="text"
+                        id="editName"
+                        required
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                </div>
+                <div>
+                    <label for="editType" class="block text-sm font-medium text-gray-700">Type:</label>
+                    <select
+                        id="editType"
+                        required
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    >
+                        <option value="">Select Type</option>
+                        <!-- Options populated by JavaScript -->
+                    </select>
+                </div>
+                <div>
+                    <label for="editColor" class="block text-sm font-medium text-gray-700">Color:</label>
+                    <input
+                        type="text"
+                        id="editColor"
+                        required
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                </div>
+                <div>
+                    <label for="editImageUrl" class="block text-sm font-medium text-gray-700">Image URL:</label>
+                    <input
+                        type="url"
+                        id="editImageUrl"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                </div>
+                <div id="editMessage" class="hidden p-3 rounded-lg text-sm"></div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button
+                        type="button"
+                        id="cancelEditBtn"
+                        class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        id="updateItemBtn"
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Update Item
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal (for clothing items) -->
+    <div id="deleteConfirmModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50 hidden">
+        <div class="relative bg-white p-8 rounded-xl shadow-lg w-full max-w-sm mx-auto border border-gray-200 text-center">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Confirm Deletion</h3>
+            <p class="text-gray-700 mb-6" id="deleteConfirmItemName"></p>
+            <div class="flex justify-center space-x-4">
+                <button
+                    type="button"
+                    id="cancelDeleteBtn"
+                    class="py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                    Cancel
+                </button>
+                <button
+                    type="button"
+                    id="confirmDeleteBtn"
+                    class="py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                >
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Outfit Modal -->
+    <div id="addOutfitModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50 hidden">
+        <div class="relative bg-white p-8 rounded-xl shadow-lg w-full max-w-xl mx-auto border border-gray-200">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Create New Outfit</h3>
+            <form id="addOutfitForm" class="space-y-4">
+                <div>
+                    <label for="outfitName" class="block text-sm font-medium text-gray-700">Outfit Name:</label>
+                    <input
+                        type="text"
+                        id="outfitName"
+                        required
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                        placeholder="e.g., Casual Friday, Evening Wear"
+                    />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Clothing Items:</label>
+                    <div id="outfitItemSelection" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-60 overflow-y-auto p-2 border border-gray-300 rounded-md bg-gray-50">
+                        <!-- Clothing items with checkboxes will be loaded here -->
+                        <p class="text-gray-500 text-sm text-center col-span-full" id="noItemsForOutfit"></p>
+                    </div>
+                </div>
+                <div id="addOutfitMessage" class="hidden p-3 rounded-lg text-sm"></div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button
+                        type="button"
+                        id="cancelAddOutfitBtn"
+                        class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        id="createOutfitBtn"
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Create Outfit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Outfit Details Modal -->
+    <div id="viewOutfitModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50 hidden">
+        <div class="relative bg-white p-8 rounded-xl shadow-lg w-full max-w-2xl mx-auto border border-gray-200">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4" id="viewOutfitName"></h3>
+            <div id="viewOutfitItemsContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-80 overflow-y-auto p-2">
+                <!-- Selected outfit items will be displayed here -->
+            </div>
+            <div class="text-right mt-6">
+                <button
+                    type="button"
+                    id="closeViewOutfitBtn"
+                    class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                >
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Outfit Modal -->
+    <div id="editOutfitModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50 hidden">
+        <div class="relative bg-white p-8 rounded-xl shadow-lg w-full max-w-xl mx-auto border border-gray-200">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Edit Outfit</h3>
+            <form id="editOutfitForm" class="space-y-4">
+                <input type="hidden" id="editOutfitId">
+                <div>
+                    <label for="editOutfitName" class="block text-sm font-medium text-gray-700">Outfit Name:</label>
+                    <input
+                        type="text"
+                        id="editOutfitName"
+                        required
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                    />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Clothing Items:</label>
+                    <div id="editOutfitItemSelection" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-60 overflow-y-auto p-2 border border-gray-300 rounded-md bg-gray-50">
+                        <!-- Clothing items with checkboxes will be loaded here -->
+                        <p class="text-gray-500 text-sm text-center col-span-full" id="noItemsForEditOutfit"></p>
+                    </div>
+                </div>
+                <div id="editOutfitMessage" class="hidden p-3 rounded-lg text-sm"></div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button
+                        type="button"
+                        id="cancelEditOutfitBtn"
+                        class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        id="updateOutfitBtn"
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Update Outfit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal (for outfits) -->
+    <div id="deleteOutfitConfirmModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50 hidden">
+        <div class="relative bg-white p-8 rounded-xl shadow-lg w-full max-w-sm mx-auto border border-gray-200 text-center">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Confirm Deletion</h3>
+            <p class="text-gray-700 mb-6" id="deleteConfirmOutfitName"></p>
+            <div class="flex justify-center space-x-4">
+                <button
+                    type="button"
+                    id="cancelDeleteOutfitBtn"
+                    class="py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                >
+                    Cancel
+                </button>
+                <button
+                    type="button"
+                    id="confirmDeleteOutfitBtn"
+                    class="py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                >
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- Global Variables and Constants ---
+        // Array to store clothing items (our "internal storage" for clothes)
+        let clothingItems = [];
+        // Array to store outfits (our "internal storage" for outfits)
+        let outfits = [];
+        // Mock user ID for display purposes in the prototype
+        let userId = '';
+        // Variable to temporarily store the ID of the item being considered for deletion
+        let currentDeleteItem = null;
+        // Variable to temporarily store the ID of the outfit being considered for deletion
+        let currentDeleteOutfit = null;
+
+        // Common clothing types for dropdowns
+        const clothingTypes = [
+            'Top', 'Bottom', 'Outerwear', 'Dress', 'Footwear', 'Accessory', 'Bag', 'Headwear', 'Jewelry', 'Other'
+        ];
+
+        // --- Helper Functions for UI Interaction and Messaging ---
+
+        /**
+         * Displays a message in the specified UI element with dynamic styling.
+         * @param {string} elementId - The ID of the HTML element to display the message in.
+         * @param {string} msg - The message text.
+         * @param {string} [type='info'] - The type of message ('info', 'success', 'error') for styling.
+         */
+        function showMessage(elementId, msg, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.textContent = msg; // Set message text
+            // Remove existing background and text color classes
+            element.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700', 'bg-blue-100', 'text-blue-700');
+            // Add new classes based on message type
+            if (type === 'error') {
+                element.classList.add('bg-red-100', 'text-red-700');
+            } else if (type === 'success') {
+                element.classList.add('bg-green-100', 'text-green-700');
+            } else { // 'info' or default
+                element.classList.add('bg-blue-100', 'text-blue-700');
+            }
+            element.classList.remove('hidden'); // Ensure message element is visible
+        }
+
+        /**
+         * Hides the message in the specified UI element.
+         * @param {string} elementId - The ID of the HTML element to hide the message from.
+         */
+        function hideMessage(elementId) {
+            document.getElementById(elementId).classList.add('hidden');
+        }
+
+        /**
+         * Sets the loading state for a button, disabling it and changing its text.
+         * @param {string} buttonId - The ID of the button element.
+         * @param {boolean} isLoading - True to set loading state, false to revert.
+         */
+        function setButtonLoading(buttonId, isLoading) {
+            const button = document.getElementById(buttonId);
+            button.disabled = isLoading; // Disable or enable the button
+            // Change button text based on loading state and button type
+            button.textContent = isLoading ? 'Loading...' : (buttonId === 'addItemBtn' ? 'Add Item' : (buttonId === 'updateItemBtn' ? 'Update Item' : (buttonId === 'createOutfitBtn' ? 'Create Outfit' : 'Update Outfit')));
+        }
+
+        /**
+         * Populates the select dropdowns for clothing types.
+         * @param {string} selectId - The ID of the select element.
+         */
+        function populateTypeSelect(selectId) {
+            const selectElement = document.getElementById(selectId);
+            console.log(`Digital Closet Debug: Populating select: ${selectId}, Element found:`, selectElement);
+
+            if (!selectElement) {
+                console.error(`Digital Closet Debug: Element with ID '${selectId}' not found.`);
+                return;
+            }
+
+            // Clear existing options (except the default "Select Type")
+            while (selectElement.children.length > 1) {
+                selectElement.removeChild(selectElement.lastChild);
+            }
+            // Add options from the clothingTypes array
+            clothingTypes.forEach(type => {
+                const option = document.createElement('option');
+                option.value = type;
+                option.textContent = type;
+                selectElement.appendChild(option);
+                console.log(`Digital Closet Debug: Added option '${type}' to '${selectId}'`);
+            });
+        }
+
+        // --- Add Clothing Item Functionality ---
+        const addClothingForm = document.getElementById('addClothingForm');
+        const nameInput = document.getElementById('name');
+        const typeSelect = document.getElementById('type');
+        const colorInput = document.getElementById('color');
+        const imageUrlInput = document.getElementById('imageUrl');
+        const addItemBtn = document.getElementById('addItemBtn');
+        const clearFormBtn = document.getElementById('clearFormBtn');
+
+        // Event listener for adding a new clothing item
+        addClothingForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // Prevent default form submission
+
+            const name = nameInput.value.trim();
+            const type = typeSelect.value;
+            const color = colorInput.value.trim();
+            const imageUrl = imageUrlInput.value.trim();
+
+            // Validate required fields
+            if (!name || !type || !color) {
+                showMessage('addMessage', 'Please fill in all required fields.', 'error');
+                return;
+            }
+
+            setButtonLoading('addItemBtn', true); // Show loading state on button
+            hideMessage('addMessage'); // Hide any previous messages
+
+            try {
+                // Create a new item object for our internal array
+                const newItem = {
+                    id: crypto.randomUUID(), // Generate a unique ID (mock, for internal use)
+                    name: name,
+                    type: type,
+                    color: color,
+                    // Use a placeholder image if no URL is provided
+                    imageUrl: imageUrl || `https://placehold.co/400x400/CCCCCC/333333?text=${name.substring(0, 5)}`,
+                    createdAt: new Date(), // Local timestamp
+                    usageCount: 0 // Initialize usage count
+                };
+
+                clothingItems.push(newItem); // Add new item to our array
+                renderClothingItems(); // Re-render the display
+                // Update outfit selection lists if add/edit outfit modal is open
+                populateOutfitItemSelection('outfitItemSelection');
+                populateOutfitItemSelection('editOutfitItemSelection');
+                showMessage('addMessage', 'Clothing item added successfully!', 'success'); // Show success message
+                addClothingForm.reset(); // Clear form fields after successful submission
+            } catch (error) {
+                console.error("Error adding item locally: ", error);
+                showMessage('addMessage', `Error adding item: ${error.message}`, 'error'); // Show error message
+            } finally {
+                setButtonLoading('addItemBtn', false); // Hide loading state
+            }
+        });
+
+        // Event listener for clearing the add item form
+        clearFormBtn.addEventListener('click', () => {
+            addClothingForm.reset(); // Reset form fields
+            hideMessage('addMessage'); // Hide any messages
+        });
+
+        // --- Display Clothing Items Functionality ---
+        const clothingItemsContainer = document.getElementById('clothingItemsContainer');
+        const displayMessage = document.getElementById('displayMessage');
+
+        /**
+         * Renders (or re-renders) all clothing items in the `clothingItems` array to the UI.
+         */
+        function renderClothingItems() {
+            clothingItemsContainer.innerHTML = ''; // Clear existing items
+
+            // Sort items by createdAt in descending order (newest first)
+            clothingItems.sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0));
+
+            if (clothingItems.length === 0) {
+                showMessage('displayMessage', 'No clothing items added yet. Add some above!', 'info');
+            } else {
+                hideMessage('displayMessage'); // Hide info message if items exist
+                // Create and append a card for each item
+                clothingItems.forEach(item => {
+                    const itemCard = createClothingItemCard(item);
+                    clothingItemsContainer.appendChild(itemCard);
+                });
+            }
+        }
+
+        /**
+         * Creates an HTML card element for a single clothing item.
+         * @param {Object} item - The clothing item data.
+         * @returns {HTMLElement} The created card element.
+         */
+        function createClothingItemCard(item) {
+            const card = document.createElement('div');
+            card.className = "border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col";
+            card.innerHTML = `
+                <div class="relative w-full h-48 bg-gray-100 flex items-center justify-center">
+                    <img
+                        src="${item.imageUrl}"
+                        alt="${item.name}"
+                        class="w-full h-full object-cover rounded-t-lg"
+                        onerror="this.onerror=null;this.src='https://placehold.co/400x400/CCCCCC/333333?text=${item.name ? item.name.substring(0, 5) : 'Item'}';this.classList.add('p-4');"
+                    />
+                </div>
+                <div class="p-4 flex-grow flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 truncate">${item.name}</h3>
+                        <p class="text-sm text-gray-600">Type: <span class="font-semibold">${item.type}</span></p>
+                        <p class="text-sm text-gray-600">Color: <span class="font-semibold">${item.color}</span></p>
+                        <p class="text-xs text-gray-400 mt-1">Added: ${item.createdAt ? item.createdAt.toLocaleDateString() : 'N/A'}</p>
+                        <p class="text-xs text-gray-400">Usage Count: ${item.usageCount}</p>
+                    </div>
+                    <div class="mt-4 flex space-x-2">
+                        <button data-id="${item.id}"
+                                class="edit-btn flex-1 py-2 px-3 text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400">
+                            Edit
+                        </button>
+                        <button data-id="${item.id}" data-name="${item.name}"
+                                class="delete-btn flex-1 py-2 px-3 text-sm font-medium rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            `;
+            // Attach event listeners to the dynamically created buttons
+            card.querySelector('.edit-btn').addEventListener('click', (e) => {
+                // Find the item by ID from the global array
+                const itemId = e.currentTarget.dataset.id;
+                const itemToEdit = clothingItems.find(item => item.id === itemId);
+                if (itemToEdit) {
+                    showEditModal(itemToEdit);
+                }
+            });
+            card.querySelector('.delete-btn').addEventListener('click', (e) => {
+                showDeleteConfirm(e.currentTarget.dataset.id, e.currentTarget.dataset.name);
+            });
+            return card;
+        }
+
+        // --- Edit Item Modal Functionality ---
+        const editItemModal = document.getElementById('editItemModal');
+        const editClothingForm = document.getElementById('editClothingForm');
+        const editItemId = document.getElementById('editItemId');
+        const editNameInput = document.getElementById('editName');
+        const editTypeSelect = document.getElementById('editType');
+        const editColorInput = document.getElementById('editColor');
+        const editImageUrlInput = document.getElementById('editImageUrl');
+        const updateItemBtn = document.getElementById('updateItemBtn');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+
+        /**
+         * Displays the edit modal and populates it with the selected item's data.
+         * @param {Object} itemData - The data of the item to be edited.
+         */
+        function showEditModal(itemData) {
+            editItemId.value = itemData.id;
+            editNameInput.value = itemData.name;
+            editTypeSelect.value = itemData.type;
+            editColorInput.value = itemData.color;
+            editImageUrlInput.value = itemData.imageUrl;
+            hideMessage('editMessage'); // Hide any previous messages in the modal
+            editItemModal.classList.remove('hidden'); // Show the modal
+        }
+
+        /**
+         * Hides the edit item modal.
+         */
+        function hideEditModal() {
+            editItemModal.classList.add('hidden'); // Hide the modal
+            hideMessage('editMessage'); // Hide any messages in the modal
+        }
+
+        // Event listener for submitting the edit item form
+        editClothingForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // Prevent default form submission
+
+            const id = editItemId.value;
+            const name = editNameInput.value.trim();
+            const type = editTypeSelect.value;
+            const color = editColorInput.value.trim();
+            const imageUrl = editImageUrlInput.value.trim();
+
+            // Validate required fields
+            if (!name || !type || !color) {
+                showMessage('editMessage', 'Please fill in all required fields.', 'error');
+                return;
+            }
+
+            setButtonLoading('updateItemBtn', true); // Show loading state on button
+            hideMessage('editMessage'); // Hide any previous messages
+
+            try {
+                // Find the item in our array by its ID and update its properties
+                clothingItems = clothingItems.map(item => {
+                    if (item.id === id) {
+                        return {
+                            ...item, // Keep existing properties like createdAt, usageCount
+                            name: name,
+                            type: type,
+                            color: color,
+                            imageUrl: imageUrl || `https://placehold.co/400x400/CCCCCC/333333?text=${name.substring(0, 5)}`,
+                        };
+                    }
+                    return item;
+                });
+                renderClothingItems(); // Re-render the display to reflect changes
+                // Re-render outfits as clothing item details might affect them
+                renderOutfits();
+                showMessage('editMessage', 'Item updated successfully!', 'success'); // Show success message
+                hideEditModal(); // Close the modal
+            } catch (error) {
+                console.error("Error updating item locally: ", error);
+                showMessage('editMessage', `Error updating item: ${error.message}`, 'error'); // Show error message
+            } finally {
+                setButtonLoading('updateItemBtn', false); // Hide loading state
+            }
+        });
+
+        // Event listener for cancelling the edit operation
+        cancelEditBtn.addEventListener('click', hideEditModal);
+
+        // --- Delete Confirmation Modal Functionality (for clothing items) ---
+        const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+        const deleteConfirmItemNameSpan = document.getElementById('deleteConfirmItemName');
+
+        /**
+         * Displays the delete confirmation modal for a clothing item.
+         * @param {string} itemId - The ID of the item to be deleted.
+         * @param {string} itemName - The name of the item to be deleted, for display in the modal.
+         */
+        function showDeleteConfirm(itemId, itemName) {
+            currentDeleteItem = itemId; // Store the ID of the item about to be deleted
+            deleteConfirmItemNameSpan.innerHTML = `Are you sure you want to delete <span class="font-semibold">"${itemName}"</span>?`;
+            deleteConfirmModal.classList.remove('hidden'); // Show the modal
+        }
+
+        /**
+         * Hides the delete confirmation modal for clothing items.
+         */
+        function hideDeleteConfirm() {
+            deleteConfirmModal.classList.add('hidden'); // Hide the modal
+            currentDeleteItem = null; // Clear the stored item ID
+        }
+
+        // Event listener for confirming clothing item deletion
+        confirmDeleteBtn.addEventListener('click', () => {
+            if (!currentDeleteItem) return; // Exit if no item ID is stored
+
+            try {
+                // Filter out the item to be deleted from our array
+                clothingItems = clothingItems.filter(item => item.id !== currentDeleteItem);
+                renderClothingItems(); // Re-render the display
+                // Also remove the item from any outfits it belongs to
+                outfits = outfits.map(outfit => ({
+                    ...outfit,
+                    itemIds: outfit.itemIds.filter(id => id !== currentDeleteItem)
+                }));
+                renderOutfits(); // Re-render outfits as well
+                showMessage('displayMessage', 'Item deleted successfully!', 'success'); // Show success message in main area
+            } catch (error) {
+                console.error("Error deleting item locally: ", error);
+                showMessage('displayMessage', `Error deleting item: ${error.message}`, 'error'); // Show error message
+            } finally {
+                hideDeleteConfirm(); // Always hide the confirmation modal
+            }
+        });
+
+        // Event listener for cancelling clothing item deletion
+        cancelDeleteBtn.addEventListener('click', hideDeleteConfirm);
+
+        // --- Outfit Planner Functionality ---
+        const addOutfitBtn = document.getElementById('addOutfitBtn');
+        const addOutfitModal = document.getElementById('addOutfitModal');
+        const addOutfitForm = document.getElementById('addOutfitForm');
+        const outfitNameInput = document.getElementById('outfitName');
+        const outfitItemSelection = document.getElementById('outfitItemSelection');
+        const noItemsForOutfit = document.getElementById('noItemsForOutfit');
+        const addOutfitMessage = document.getElementById('addOutfitMessage');
+        const cancelAddOutfitBtn = document.getElementById('cancelAddOutfitBtn');
+        const createOutfitBtn = document.getElementById('createOutfitBtn');
+        const outfitsContainer = document.getElementById('outfitsContainer');
+        const outfitsMessage = document.getElementById('outfitsMessage');
+
+        // View Outfit Modal elements
+        const viewOutfitModal = document.getElementById('viewOutfitModal');
+        const viewOutfitName = document.getElementById('viewOutfitName');
+        const viewOutfitItemsContainer = document.getElementById('viewOutfitItemsContainer');
+        const closeViewOutfitBtn = document.getElementById('closeViewOutfitBtn');
+
+        // Edit Outfit Modal elements
+        const editOutfitModal = document.getElementById('editOutfitModal');
+        const editOutfitForm = document.getElementById('editOutfitForm');
+        const editOutfitId = document.getElementById('editOutfitId');
+        const editOutfitNameInput = document.getElementById('editOutfitName');
+        const editOutfitItemSelection = document.getElementById('editOutfitItemSelection');
+        const noItemsForEditOutfit = document.getElementById('noItemsForEditOutfit');
+        const editOutfitMessage = document.getElementById('editOutfitMessage');
+        const cancelEditOutfitBtn = document.getElementById('cancelEditOutfitBtn');
+        const updateOutfitBtn = document.getElementById('updateOutfitBtn');
+
+        // Delete Outfit Confirmation Modal elements
+        const deleteOutfitConfirmModal = document.getElementById('deleteOutfitConfirmModal');
+        const deleteConfirmOutfitNameSpan = document.getElementById('deleteConfirmOutfitName');
+        const cancelDeleteOutfitBtn = document.getElementById('cancelDeleteOutfitBtn');
+        const confirmDeleteOutfitBtn = document.getElementById('confirmDeleteOutfitBtn');
+
+
+        /**
+         * Populates the clothing item selection area in the outfit creation/edit modal.
+         * @param {string} containerId - The ID of the container element (e.g., 'outfitItemSelection', 'editOutfitItemSelection').
+         * @param {Array<string>} [selectedItemIds=[]] - An array of item IDs that should be pre-selected (for editing).
+         */
+        function populateOutfitItemSelection(containerId, selectedItemIds = []) {
+            const container = document.getElementById(containerId);
+            const noItemsMessage = document.getElementById(containerId === 'outfitItemSelection' ? 'noItemsForOutfit' : 'noItemsForEditOutfit');
+
+            container.innerHTML = ''; // Clear previous items
+
+            if (clothingItems.length === 0) {
+                noItemsMessage.textContent = 'No clothing items available. Add some to your wardrobe first!';
+                noItemsMessage.classList.remove('hidden');
+                return;
+            } else {
+                noItemsMessage.classList.add('hidden');
+            }
+
+            clothingItems.forEach(item => {
+                const isChecked = selectedItemIds.includes(item.id);
+                const itemDiv = document.createElement('div');
+                itemDiv.className = "flex items-center space-x-2 p-2 bg-white rounded-md shadow-sm border border-gray-200";
+                itemDiv.innerHTML = `
+                    <input type="checkbox" id="outfit-item-${item.id}" value="${item.id}" class="form-checkbox h-4 w-4 text-purple-600 rounded" ${isChecked ? 'checked' : ''}>
+                    <label for="outfit-item-${item.id}" class="flex-1 text-sm font-medium text-gray-700 cursor-pointer flex items-center">
+                        <img src="${item.imageUrl}" alt="${item.name}" class="h-8 w-8 object-cover rounded-md mr-2"
+                             onerror="this.onerror=null;this.src='https://placehold.co/40x40/DDDDDD/777777?text=';">
+                        <span class="truncate">${item.name} (${item.color})</span>
+                    </label>
+                `;
+                container.appendChild(itemDiv);
+            });
+        }
+
+        /**
+         * Displays the Add Outfit modal.
+         */
+        addOutfitBtn.addEventListener('click', () => {
+            outfitNameInput.value = ''; // Clear name input
+            populateOutfitItemSelection('outfitItemSelection'); // Populate checkboxes
+            hideMessage('addOutfitMessage'); // Hide any messages
+            addOutfitModal.classList.remove('hidden'); // Show modal
+        });
+
+        /**
+         * Hides the Add Outfit modal.
+         */
+        cancelAddOutfitBtn.addEventListener('click', () => {
+            addOutfitModal.classList.add('hidden');
+            hideMessage('addOutfitMessage');
+        });
+
+        /**
+         * Handles the submission of the Add Outfit form.
+         */
+        addOutfitForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const outfitName = outfitNameInput.value.trim();
+            const selectedItems = Array.from(outfitItemSelection.querySelectorAll('input[type="checkbox"]:checked'))
+                                      .map(checkbox => checkbox.value);
+
+            if (!outfitName) {
+                showMessage('addOutfitMessage', 'Please enter an outfit name.', 'error');
+                return;
+            }
+            if (selectedItems.length === 0) {
+                showMessage('addOutfitMessage', 'Please select at least one clothing item for the outfit.', 'error');
+                return;
+            }
+
+            setButtonLoading('createOutfitBtn', true);
+            hideMessage('addOutfitMessage');
+
+            try {
+                const newOutfit = {
+                    id: crypto.randomUUID(),
+                    name: outfitName,
+                    itemIds: selectedItems,
+                    createdAt: new Date(),
+                    // Add outfit usage count later if needed
+                    usageCount: 0
+                };
+                outfits.push(newOutfit);
+                renderOutfits(); // Re-render outfit list
+                showMessage('addOutfitMessage', 'Outfit created successfully!', 'success');
+                addOutfitForm.reset();
+                addOutfitModal.classList.add('hidden'); // Hide modal
+            } catch (error) {
+                console.error("Error creating outfit: ", error);
+                showMessage('addOutfitMessage', `Error creating outfit: ${error.message}`, 'error');
+            } finally {
+                setButtonLoading('createOutfitBtn', false);
+            }
+        });
+
+        /**
+         * Renders all outfits in the `outfits` array to the UI.
+         */
+        function renderOutfits() {
+            outfitsContainer.innerHTML = ''; // Clear existing outfits
+
+            // Sort outfits by createdAt in descending order (newest first)
+            outfits.sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0));
+
+            if (outfits.length === 0) {
+                showMessage('outfitsMessage', 'No outfits created yet. Click "New Outfit" to get started!', 'info');
+            } else {
+                hideMessage('outfitsMessage');
+                outfits.forEach(outfit => {
+                    const outfitCard = createOutfitCard(outfit);
+                    outfitsContainer.appendChild(outfitCard);
+                });
+            }
+        }
+
+        /**
+         * Creates an HTML card element for a single outfit.
+         * @param {Object} outfit - The outfit data.
+         * @returns {HTMLElement} The created card element.
+         */
+        function createOutfitCard(outfit) {
+            const card = document.createElement('div');
+            card.className = "border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col";
+
+            // Find items for outfit to display previews
+            const outfitItems = outfit.itemIds.map(id => clothingItems.find(item => item.id === id)).filter(Boolean);
+            const itemPreviewHtml = outfitItems.slice(0, 4).map(item => `
+                <img src="${item.imageUrl}" alt="${item.name}" class="h-10 w-10 object-cover rounded-full border border-gray-300"
+                     onerror="this.onerror=null;this.src='https://placehold.co/40x40/DDDDDD/777777?text=';">
+            `).join('');
+
+            const moreItemsCount = outfitItems.length > 4 ? `+${outfitItems.length - 4} more` : '';
+
+            card.innerHTML = `
+                <div class="p-4 flex-grow flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 truncate mb-2">${outfit.name}</h3>
+                        <div class="flex flex-wrap gap-1 mb-2">
+                            ${itemPreviewHtml}
+                            ${moreItemsCount ? `<span class="text-xs text-gray-500 flex items-center">${moreItemsCount}</span>` : ''}
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1">Created: ${outfit.createdAt ? outfit.createdAt.toLocaleDateString() : 'N/A'}</p>
+                        <p class="text-xs text-gray-400">Items: ${outfit.itemIds.length}</p>
+                    </div>
+                    <div class="mt-4 flex space-x-2">
+                        <button data-id="${outfit.id}"
+                                class="view-outfit-btn flex-1 py-2 px-3 text-sm font-medium rounded-md text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400">
+                            View
+                        </button>
+                        <button data-id="${outfit.id}"
+                                class="edit-outfit-btn flex-1 py-2 px-3 text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400">
+                            Edit
+                        </button>
+                        <button data-id="${outfit.id}" data-name="${outfit.name}"
+                                class="delete-outfit-btn flex-1 py-2 px-3 text-sm font-medium rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            `;
+            card.querySelector('.view-outfit-btn').addEventListener('click', (e) => {
+                const outfitId = e.currentTarget.dataset.id;
+                const outfitToView = outfits.find(o => o.id === outfitId);
+                if (outfitToView) {
+                    showViewOutfitModal(outfitToView);
+                }
+            });
+            card.querySelector('.edit-outfit-btn').addEventListener('click', (e) => {
+                const outfitId = e.currentTarget.dataset.id;
+                const outfitToEdit = outfits.find(o => o.id === outfitId);
+                if (outfitToEdit) {
+                    showEditOutfitModal(outfitToEdit);
+                }
+            });
+            card.querySelector('.delete-outfit-btn').addEventListener('click', (e) => {
+                showDeleteOutfitConfirm(e.currentTarget.dataset.id, e.currentTarget.dataset.name);
+            });
+            return card;
+        }
+
+        /**
+         * Displays the View Outfit Details modal.
+         * @param {Object} outfit - The outfit object to display.
+         */
+        function showViewOutfitModal(outfit) {
+            viewOutfitName.textContent = outfit.name;
+            viewOutfitItemsContainer.innerHTML = ''; // Clear previous items
+
+            const outfitItems = outfit.itemIds.map(id => clothingItems.find(item => item.id === id)).filter(Boolean);
+
+            if (outfitItems.length === 0) {
+                viewOutfitItemsContainer.innerHTML = '<p class="text-gray-500 col-span-full text-center">No items found for this outfit (some items might have been deleted).</p>';
+            } else {
+                outfitItems.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = "flex flex-col items-center p-2 border border-gray-200 rounded-md shadow-sm";
+                    itemDiv.innerHTML = `
+                        <img src="${item.imageUrl}" alt="${item.name}" class="h-20 w-20 object-cover rounded-md mb-2"
+                             onerror="this.onerror=null;this.src='https://placehold.co/80x80/DDDDDD/777777?text=';">
+                        <span class="text-sm font-medium text-gray-800 truncate">${item.name}</span>
+                        <span class="text-xs text-gray-600">${item.type} | ${item.color}</span>
+                    `;
+                    viewOutfitItemsContainer.appendChild(itemDiv);
+                });
+            }
+            viewOutfitModal.classList.remove('hidden');
+        }
+
+        /**
+         * Hides the View Outfit Details modal.
+         */
+        closeViewOutfitBtn.addEventListener('click', () => {
+            viewOutfitModal.classList.add('hidden');
+        });
+
+        /**
+         * Displays the Edit Outfit modal.
+         * @param {Object} outfit - The outfit object to edit.
+         */
+        function showEditOutfitModal(outfit) {
+            editOutfitId.value = outfit.id;
+            editOutfitNameInput.value = outfit.name;
+            populateOutfitItemSelection('editOutfitItemSelection', outfit.itemIds); // Pre-select items
+            hideMessage('editOutfitMessage');
+            editOutfitModal.classList.remove('hidden');
+        }
+
+        /**
+         * Hides the Edit Outfit modal.
+         */
+        cancelEditOutfitBtn.addEventListener('click', () => {
+            editOutfitModal.classList.add('hidden');
+            hideMessage('editOutfitMessage');
+        });
+
+        /**
+         * Handles the submission of the Edit Outfit form.
+         */
+        editOutfitForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const id = editOutfitId.value;
+            const outfitName = editOutfitNameInput.value.trim();
+            const selectedItems = Array.from(editOutfitItemSelection.querySelectorAll('input[type="checkbox"]:checked'))
+                                      .map(checkbox => checkbox.value);
+
+            if (!outfitName) {
+                showMessage('editOutfitMessage', 'Please enter an outfit name.', 'error');
+                return;
+            }
+            if (selectedItems.length === 0) {
+                showMessage('editOutfitMessage', 'Please select at least one clothing item for the outfit.', 'error');
+                return;
+            }
+
+            setButtonLoading('updateOutfitBtn', true);
+            hideMessage('editOutfitMessage');
+
+            try {
+                outfits = outfits.map(outfit => {
+                    if (outfit.id === id) {
+                        return {
+                            ...outfit,
+                            name: outfitName,
+                            itemIds: selectedItems
+                        };
+                    }
+                    return outfit;
+                });
+                renderOutfits();
+                showMessage('editOutfitMessage', 'Outfit updated successfully!', 'success');
+                editOutfitModal.classList.add('hidden'); // Hide modal
+            } catch (error) {
+                console.error("Error updating outfit: ", error);
+                showMessage('editOutfitMessage', `Error updating outfit: ${error.message}`, 'error');
+            } finally {
+                setButtonLoading('updateOutfitBtn', false);
+            }
+        });
+
+        /**
+         * Displays the delete confirmation modal for an outfit.
+         * @param {string} outfitId - The ID of the outfit to be deleted.
+         * @param {string} outfitName - The name of the outfit to be deleted, for display in the modal.
+         */
+        function showDeleteOutfitConfirm(outfitId, outfitName) {
+            currentDeleteOutfit = outfitId;
+            deleteConfirmOutfitNameSpan.innerHTML = `Are you sure you want to delete <span class="font-semibold">"${outfitName}"</span>?`;
+            deleteOutfitConfirmModal.classList.remove('hidden');
+        }
+
+        /**
+         * Hides the delete confirmation modal for outfits.
+         */
+        cancelDeleteOutfitBtn.addEventListener('click', () => {
+            deleteOutfitConfirmModal.classList.add('hidden');
+            currentDeleteOutfit = null;
+        });
+
+        /**
+         * Handles the confirmation of outfit deletion.
+         */
+        confirmDeleteOutfitBtn.addEventListener('click', () => {
+            if (!currentDeleteOutfit) return;
+
+            try {
+                outfits = outfits.filter(outfit => outfit.id !== currentDeleteOutfit);
+                renderOutfits();
+                showMessage('outfitsMessage', 'Outfit deleted successfully!', 'success');
+            } catch (error) {
+                console.error("Error deleting outfit: ", error);
+                showMessage('outfitsMessage', `Error deleting outfit: ${error.message}`, 'error');
+            } finally {
+                deleteOutfitConfirmModal.classList.add('hidden');
+                currentDeleteOutfit = null;
+            }
+        });
+
+
+        // --- Initialization ---
+
+        /**
+         * Initializes the application when the window loads.
+         * Populates dropdowns and renders initial clothing items and outfits.
+         */
+        function initApp() {
+            console.log("Digital Closet Debug: initApp started.");
+            // Generate a mock user ID and display it
+            userId = crypto.randomUUID();
+            document.getElementById('actualUserId').textContent = userId;
+            document.getElementById('userIdDisplay').classList.remove('hidden');
+
+            // Populate type dropdowns for both add and edit forms
+            populateTypeSelect('type');
+            populateTypeSelect('editType');
+
+            // Initial render of clothing items (will be empty initially)
+            renderClothingItems();
+            // Initial render of outfits (will be empty initially)
+            renderOutfits();
+        }
+
+        // Attach the initialization function to the window's load event
+        window.onload = initApp;
+    </script>
+</body>
+</html>
