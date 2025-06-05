@@ -1020,4 +1020,188 @@
             `;
             card.querySelector('.view-outfit-btn').addEventListener('click', (e) => {
                 const outfitId = e.currentTarget.dataset.id;
-                const outfitToView = outfits.find(o => o.id === outfi
+                const outfitToView = outfits.find(o => o.id === outfitId);
+                if (outfitToView) {
+                    showViewOutfitModal(outfitToView);
+                }
+            });
+            card.querySelector('.edit-outfit-btn').addEventListener('click', (e) => {
+                const outfitId = e.currentTarget.dataset.id;
+                const outfitToEdit = outfits.find(o => o.id === outfitId);
+                if (outfitToEdit) {
+                    showEditOutfitModal(outfitToEdit);
+                }
+            });
+            card.querySelector('.delete-outfit-btn').addEventListener('click', (e) => {
+                showDeleteOutfitConfirm(e.currentTarget.dataset.id, e.currentTarget.dataset.name);
+            });
+            return card;
+        }
+
+        /**
+         * Displays the View Outfit Details modal.
+         * @param {Object} outfit - The outfit object to display.
+         */
+        function showViewOutfitModal(outfit) {
+            viewOutfitName.textContent = outfit.name;
+            viewOutfitItemsContainer.innerHTML = ''; // Clear previous items
+
+            const outfitItems = outfit.itemIds.map(id => clothingItems.find(item => item.id === id)).filter(Boolean);
+
+            if (outfitItems.length === 0) {
+                viewOutfitItemsContainer.innerHTML = '<p class="text-gray-500 col-span-full text-center p-4">No items found for this outfit (some items might have been deleted).</p>';
+            } else {
+                outfitItems.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = "flex flex-col items-center p-3 border border-gray-200 rounded-lg shadow-sm bg-white hover:shadow-md transition-shadow duration-200";
+                    itemDiv.innerHTML = `
+                        <img src="${item.imageUrl}" alt="${item.name}" class="h-20 w-20 object-cover rounded-lg mb-2 border border-gray-200 shadow-sm"
+                             onerror="this.onerror=null;this.src='https://placehold.co/80x80/DDDDDD/777777?text=';">
+                        <span class="text-sm font-medium text-gray-800 text-center truncate w-full">${item.name}</span>
+                        <span class="text-xs text-gray-600 text-center">${item.type} | ${item.color}</span>
+                    `;
+                    viewOutfitItemsContainer.appendChild(itemDiv);
+                });
+            }
+            showModal('viewOutfitModal', 'viewOutfitModal');
+        }
+
+        /**
+         * Hides the View Outfit Details modal.
+         */
+        closeViewOutfitBtn.addEventListener('click', () => {
+            hideModal('viewOutfitModal', 'viewOutfitModal');
+        });
+
+        /**
+         * Displays the Edit Outfit modal.
+         * @param {Object} outfit - The outfit object to edit.
+         */
+        function showEditOutfitModal(outfit) {
+            editOutfitId.value = outfit.id;
+            editOutfitNameInput.value = outfit.name;
+            populateOutfitItemSelection('editOutfitItemSelection', outfit.itemIds); // Pre-select items
+            hideMessage('editOutfitMessage');
+            showModal('editOutfitModal', 'editOutfitModal');
+        }
+
+        /**
+         * Hides the Edit Outfit modal.
+         */
+        cancelEditOutfitBtn.addEventListener('click', () => {
+            hideModal('editOutfitModal', 'editOutfitModal');
+            hideMessage('editOutfitMessage');
+        });
+
+        /**
+         * Handles the submission of the Edit Outfit form.
+         */
+        editOutfitForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const id = editOutfitId.value;
+            const outfitName = editOutfitNameInput.value.trim();
+            const selectedItems = Array.from(editOutfitItemSelection.querySelectorAll('input[type="checkbox"]:checked'))
+                                      .map(checkbox => checkbox.value);
+
+            if (!outfitName) {
+                showMessage('editOutfitMessage', 'Please enter an outfit name.', 'error');
+                return;
+            }
+            if (selectedItems.length === 0) {
+                showMessage('editOutfitMessage', 'Please select at least one clothing item for the outfit.', 'error');
+                return;
+            }
+
+            setButtonLoading('updateOutfitBtn', true);
+            hideMessage('editOutfitMessage');
+
+            try {
+                outfits = outfits.map(outfit => {
+                    if (outfit.id === id) {
+                        return {
+                            ...outfit,
+                            name: outfitName,
+                            itemIds: selectedItems
+                        };
+                    }
+                    return outfit;
+                });
+                renderOutfits();
+                showMessage('editOutfitMessage', 'Outfit updated successfully!', 'success');
+                hideModal('editOutfitModal', 'editOutfitModal'); // Hide modal
+            } catch (error) {
+                console.error("Error updating outfit: ", error);
+                showMessage('editOutfitMessage', `Error updating outfit: ${error.message}`, 'error');
+            } finally {
+                setButtonLoading('updateOutfitBtn', false);
+            }
+        });
+
+        /**
+         * Displays the delete confirmation modal for an outfit.
+         * @param {string} outfitId - The ID of the outfit to be deleted.
+         * @param {string} outfitName - The name of the outfit to be deleted, for display in the modal.
+         */
+        function showDeleteOutfitConfirm(outfitId, outfitName) {
+            currentDeleteOutfit = outfitId;
+            deleteConfirmOutfitNameSpan.innerHTML = `Are you sure you want to delete <span class="font-semibold text-gray-900">"${outfitName}"</span>?`;
+            showModal('deleteOutfitConfirmModal', 'deleteOutfitConfirmModal');
+        }
+
+        /**
+         * Hides the delete confirmation modal for outfits.
+         */
+        cancelDeleteOutfitBtn.addEventListener('click', () => {
+            hideModal('deleteOutfitConfirmModal', 'deleteOutfitConfirmModal');
+            currentDeleteOutfit = null;
+        });
+
+        /**
+         * Handles the confirmation of outfit deletion.
+         */
+        confirmDeleteOutfitBtn.addEventListener('click', () => {
+            if (!currentDeleteOutfit) return;
+
+            try {
+                outfits = outfits.filter(outfit => outfit.id !== currentDeleteOutfit);
+                renderOutfits();
+                showMessage('outfitsMessage', 'Outfit deleted successfully!', 'success');
+            } catch (error) {
+                console.error("Error deleting outfit: ", error);
+                showMessage('outfitsMessage', `Error deleting outfit: ${error.message}`, 'error');
+            } finally {
+                hideModal('deleteOutfitConfirmModal', 'deleteOutfitConfirmModal');
+                currentDeleteOutfit = null;
+            }
+        });
+
+
+        // --- Initialization ---
+
+        /**
+         * Initializes the application when the window loads.
+         * Populates dropdowns and renders initial clothing items and outfits.
+         */
+        function initApp() {
+            console.log("Digital Closet Debug: initApp started.");
+            // Generate a mock user ID and display it
+            userId = crypto.randomUUID();
+            document.getElementById('userIdDisplay').querySelector('span').textContent = userId; // Corrected ID usage
+            document.getElementById('userIdDisplay').classList.remove('hidden');
+
+            // Populate type dropdowns for both add and edit forms
+            populateTypeSelect('type');
+            populateTypeSelect('editType');
+
+            // Initial render of clothing items (will be empty initially)
+            renderClothingItems();
+            // Initial render of outfits (will be empty initially)
+            renderOutfits();
+        }
+
+        // Attach the initialization function to the window's load event
+        window.onload = initApp;
+    </script>
+</body>
+</html>
