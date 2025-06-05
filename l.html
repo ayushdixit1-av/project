@@ -10,23 +10,74 @@
         /* Apply Inter font and basic body styles */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc; /* Light blue-gray background */
-            color: #334155; /* Darker text color */
+            background-color: #f0f4f8; /* Softer blue-gray background */
+            color: #2d3748; /* Slightly darker text for better contrast */
+            transition: background-color 0.3s ease;
         }
         /* Custom scrollbar for a cleaner look */
         ::-webkit-scrollbar {
             width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #cbd5e1; /* Light gray track */
+            background: #e2e8f0; /* Lighter gray track */
             border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb {
-            background: #64748b; /* Medium gray thumb */
+            background: #62728b; /* Medium gray thumb */
             border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #475569; /* Darker gray on hover */
+            background: #4a5568; /* Darker gray on hover */
+        }
+
+        /* Enhanced button styles */
+        .btn-primary {
+            @apply flex-1 inline-flex justify-center py-2 px-4 border border-transparent shadow-lg text-sm font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 ease-in-out transform hover:scale-105;
+        }
+        .btn-secondary {
+            @apply flex-1 inline-flex justify-center py-2 px-4 border border-gray-300 shadow-lg text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 ease-in-out transform hover:scale-105;
+        }
+        .btn-green {
+            @apply flex-1 py-2 px-3 text-sm font-medium rounded-xl text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400 transition-all duration-200 ease-in-out transform hover:scale-105;
+        }
+        .btn-blue {
+            @apply flex-1 py-2 px-3 text-sm font-medium rounded-xl text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 transition-all duration-200 ease-in-out transform hover:scale-105;
+        }
+        .btn-red {
+            @apply flex-1 py-2 px-3 text-sm font-medium rounded-xl text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400 transition-all duration-200 ease-in-out transform hover:scale-105;
+        }
+        .btn-purple {
+            @apply inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-xl shadow-lg text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200 ease-in-out transform hover:scale-105;
+        }
+
+        /* Card styles */
+        .card-base {
+            @apply bg-white p-6 rounded-2xl shadow-xl border border-gray-200 transition-all duration-300 ease-in-out hover:shadow-2xl;
+        }
+
+        /* Input/Select field styles */
+        .input-field {
+            @apply mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all duration-200 ease-in-out;
+        }
+        .select-field {
+            @apply mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all duration-200 ease-in-out;
+        }
+
+        /* Modal backdrop and content */
+        .modal-backdrop {
+            @apply fixed inset-0 bg-gray-900 bg-opacity-75 overflow-y-auto h-full w-full flex items-center justify-center z-50 transition-opacity duration-300 ease-in-out;
+        }
+        .modal-content {
+            @apply relative bg-white p-8 rounded-2xl shadow-2xl w-full max-w-lg mx-auto border-t-8 border-indigo-600 transform scale-95 opacity-0 transition-all duration-300 ease-out;
+        }
+        .modal-content.show {
+            @apply scale-100 opacity-100;
+        }
+        .modal-content.outfit {
+            @apply border-t-8 border-purple-600;
+        }
+         .modal-content.delete {
+            @apply border-t-8 border-red-600 max-w-sm;
         }
     </style>
 </head>
@@ -40,12 +91,12 @@
         </p>
         <!-- User ID display (mocked for prototype) -->
         <p id="userIdDisplay" class="text-center text-gray-500 text-xs mb-8 break-all hidden">
-            User ID: <span class="font-mono bg-gray-100 p-1 rounded" id="actualUserId"></span>
+            User ID: <span class="font-mono bg-gray-100 p-1 rounded-md px-2 py-1 text-gray-700"></span>
         </p>
 
         <div class="max-w-7xl mx-auto space-y-8">
             <!-- Add Clothing Item Section -->
-            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+            <div class="card-base">
                 <h2 class="text-2xl font-semibold text-gray-800 mb-4">Add New Clothing Item</h2>
                 <form id="addClothingForm" class="space-y-4">
                     <div>
@@ -54,7 +105,7 @@
                             type="text"
                             id="name"
                             required
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            class="input-field"
                             placeholder="e.g., Blue T-shirt"
                         />
                     </div>
@@ -63,7 +114,7 @@
                         <select
                             id="type"
                             required
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            class="select-field"
                         >
                             <option value="">Select Type</option>
                             <!-- Options populated by JavaScript -->
@@ -75,7 +126,7 @@
                             type="text"
                             id="color"
                             required
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            class="input-field"
                             placeholder="e.g., Navy, Black, Red"
                         />
                     </div>
@@ -84,23 +135,23 @@
                         <input
                             type="url"
                             id="imageUrl"
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            class="input-field"
                             placeholder="https://example.com/item.jpg"
                         />
                     </div>
-                    <div id="addMessage" class="hidden p-3 rounded-lg text-sm"></div>
-                    <div class="flex space-x-3">
+                    <div id="addMessage" class="hidden p-3 rounded-xl text-sm transition-opacity duration-300"></div>
+                    <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 mt-6">
                         <button
                             type="submit"
                             id="addItemBtn"
-                            class="flex-1 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                            class="btn-primary"
                         >
                             Add Item
                         </button>
                         <button
                             type="button"
                             id="clearFormBtn"
-                            class="flex-1 inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            class="btn-secondary"
                         >
                             Clear
                         </button>
@@ -109,36 +160,36 @@
             </div>
 
             <!-- Display Clothing Items Section -->
-            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+            <div class="card-base">
                 <h2 class="text-2xl font-semibold text-gray-800 mb-4">My Wardrobe</h2>
-                <div id="displayMessage" class="hidden p-3 rounded-lg text-sm mb-4"></div>
+                <div id="displayMessage" class="hidden p-3 rounded-xl text-sm mb-4 transition-opacity duration-300"></div>
                 <div id="clothingItemsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     <!-- Clothing items will be dynamically inserted here by JavaScript -->
                 </div>
             </div>
 
             <!-- Outfit Planner Section -->
-            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center justify-between">
+            <div class="card-base">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between">
                     Outfit Planner
-                    <button id="addOutfitBtn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                    <button id="addOutfitBtn" class="btn-purple mt-3 sm:mt-0">
                         <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
                         </svg>
                         New Outfit
                     </button>
                 </h2>
-                <div id="outfitsMessage" class="hidden p-3 rounded-lg text-sm mb-4"></div>
+                <div id="outfitsMessage" class="hidden p-3 rounded-xl text-sm mb-4 transition-opacity duration-300"></div>
                 <div id="outfitsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     <!-- Outfits will be dynamically inserted here by JavaScript -->
                 </div>
             </div>
 
             <!-- Future Sections (e.g., AI suggestions, monetization) -->
-            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+            <div class="card-base">
                 <h2 class="text-2xl font-semibold text-gray-800 mb-4">AI Suggestions & Affiliate Links (Coming Soon!)</h2>
                 <p class="text-gray-600">Get smart outfit recommendations and discover similar clothing items from your favorite brands.</p>
-                <div class="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-md text-gray-500">
+                <div class="mt-4 p-4 bg-gray-100 border border-gray-200 rounded-xl text-gray-500 text-center text-sm">
                     Stay tuned for advanced features!
                 </div>
             </div>
@@ -146,8 +197,8 @@
     </div>
 
     <!-- Edit Item Modal -->
-    <div id="editItemModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50 hidden">
-        <div class="relative bg-white p-8 rounded-xl shadow-lg w-full max-w-lg mx-auto border border-gray-200">
+    <div id="editItemModal" class="modal-backdrop hidden">
+        <div class="modal-content">
             <h3 class="text-xl font-semibold text-gray-800 mb-4">Edit Clothing Item</h3>
             <form id="editClothingForm" class="space-y-4">
                 <input type="hidden" id="editItemId">
@@ -157,7 +208,7 @@
                         type="text"
                         id="editName"
                         required
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        class="input-field"
                     />
                 </div>
                 <div>
@@ -165,7 +216,7 @@
                     <select
                         id="editType"
                         required
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        class="select-field"
                     >
                         <option value="">Select Type</option>
                         <!-- Options populated by JavaScript -->
@@ -177,7 +228,7 @@
                         type="text"
                         id="editColor"
                         required
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        class="input-field"
                     />
                 </div>
                 <div>
@@ -185,22 +236,22 @@
                     <input
                         type="url"
                         id="editImageUrl"
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        class="input-field"
                     />
                 </div>
-                <div id="editMessage" class="hidden p-3 rounded-lg text-sm"></div>
+                <div id="editMessage" class="hidden p-3 rounded-xl text-sm transition-opacity duration-300"></div>
                 <div class="flex justify-end space-x-3 mt-6">
                     <button
                         type="button"
                         id="cancelEditBtn"
-                        class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        class="btn-secondary"
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
                         id="updateItemBtn"
-                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                        class="btn-primary"
                     >
                         Update Item
                     </button>
@@ -210,22 +261,22 @@
     </div>
 
     <!-- Delete Confirmation Modal (for clothing items) -->
-    <div id="deleteConfirmModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50 hidden">
-        <div class="relative bg-white p-8 rounded-xl shadow-lg w-full max-w-sm mx-auto border border-gray-200 text-center">
+    <div id="deleteConfirmModal" class="modal-backdrop hidden">
+        <div class="modal-content delete">
             <h3 class="text-xl font-semibold text-gray-800 mb-4">Confirm Deletion</h3>
             <p class="text-gray-700 mb-6" id="deleteConfirmItemName"></p>
             <div class="flex justify-center space-x-4">
                 <button
                     type="button"
                     id="cancelDeleteBtn"
-                    class="py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    class="btn-secondary"
                 >
                     Cancel
                 </button>
                 <button
                     type="button"
                     id="confirmDeleteBtn"
-                    class="py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    class="btn-red"
                 >
                     Delete
                 </button>
@@ -234,8 +285,8 @@
     </div>
 
     <!-- Add Outfit Modal -->
-    <div id="addOutfitModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50 hidden">
-        <div class="relative bg-white p-8 rounded-xl shadow-lg w-full max-w-xl mx-auto border border-gray-200">
+    <div id="addOutfitModal" class="modal-backdrop hidden">
+        <div class="modal-content outfit">
             <h3 class="text-xl font-semibold text-gray-800 mb-4">Create New Outfit</h3>
             <form id="addOutfitForm" class="space-y-4">
                 <div>
@@ -244,30 +295,30 @@
                         type="text"
                         id="outfitName"
                         required
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                        class="input-field focus:ring-purple-500 focus:border-purple-500"
                         placeholder="e.g., Casual Friday, Evening Wear"
                     />
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Select Clothing Items:</label>
-                    <div id="outfitItemSelection" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-60 overflow-y-auto p-2 border border-gray-300 rounded-md bg-gray-50">
+                    <div id="outfitItemSelection" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-60 overflow-y-auto p-3 border border-gray-300 rounded-xl bg-gray-50 shadow-inner">
                         <!-- Clothing items with checkboxes will be loaded here -->
                         <p class="text-gray-500 text-sm text-center col-span-full" id="noItemsForOutfit"></p>
                     </div>
                 </div>
-                <div id="addOutfitMessage" class="hidden p-3 rounded-lg text-sm"></div>
+                <div id="addOutfitMessage" class="hidden p-3 rounded-xl text-sm transition-opacity duration-300"></div>
                 <div class="flex justify-end space-x-3 mt-6">
                     <button
                         type="button"
                         id="cancelAddOutfitBtn"
-                        class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                        class="btn-secondary"
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
                         id="createOutfitBtn"
-                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                        class="btn-purple"
                     >
                         Create Outfit
                     </button>
@@ -277,17 +328,17 @@
     </div>
 
     <!-- View Outfit Details Modal -->
-    <div id="viewOutfitModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50 hidden">
-        <div class="relative bg-white p-8 rounded-xl shadow-lg w-full max-w-2xl mx-auto border border-gray-200">
+    <div id="viewOutfitModal" class="modal-backdrop hidden">
+        <div class="modal-content outfit">
             <h3 class="text-xl font-semibold text-gray-800 mb-4" id="viewOutfitName"></h3>
-            <div id="viewOutfitItemsContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-80 overflow-y-auto p-2">
+            <div id="viewOutfitItemsContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-80 overflow-y-auto p-2 border border-gray-200 rounded-xl bg-gray-50 shadow-inner">
                 <!-- Selected outfit items will be displayed here -->
             </div>
             <div class="text-right mt-6">
                 <button
                     type="button"
                     id="closeViewOutfitBtn"
-                    class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                    class="btn-secondary"
                 >
                     Close
                 </button>
@@ -296,8 +347,8 @@
     </div>
 
     <!-- Edit Outfit Modal -->
-    <div id="editOutfitModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50 hidden">
-        <div class="relative bg-white p-8 rounded-xl shadow-lg w-full max-w-xl mx-auto border border-gray-200">
+    <div id="editOutfitModal" class="modal-backdrop hidden">
+        <div class="modal-content outfit">
             <h3 class="text-xl font-semibold text-gray-800 mb-4">Edit Outfit</h3>
             <form id="editOutfitForm" class="space-y-4">
                 <input type="hidden" id="editOutfitId">
@@ -307,29 +358,29 @@
                         type="text"
                         id="editOutfitName"
                         required
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                        class="input-field focus:ring-purple-500 focus:border-purple-500"
                     />
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Select Clothing Items:</label>
-                    <div id="editOutfitItemSelection" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-60 overflow-y-auto p-2 border border-gray-300 rounded-md bg-gray-50">
+                    <div id="editOutfitItemSelection" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-60 overflow-y-auto p-3 border border-gray-300 rounded-xl bg-gray-50 shadow-inner">
                         <!-- Clothing items with checkboxes will be loaded here -->
                         <p class="text-gray-500 text-sm text-center col-span-full" id="noItemsForEditOutfit"></p>
                     </div>
                 </div>
-                <div id="editOutfitMessage" class="hidden p-3 rounded-lg text-sm"></div>
+                <div id="editOutfitMessage" class="hidden p-3 rounded-xl text-sm transition-opacity duration-300"></div>
                 <div class="flex justify-end space-x-3 mt-6">
                     <button
                         type="button"
                         id="cancelEditOutfitBtn"
-                        class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                        class="btn-secondary"
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
                         id="updateOutfitBtn"
-                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                        class="btn-purple"
                     >
                         Update Outfit
                     </button>
@@ -339,22 +390,22 @@
     </div>
 
     <!-- Delete Confirmation Modal (for outfits) -->
-    <div id="deleteOutfitConfirmModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50 hidden">
-        <div class="relative bg-white p-8 rounded-xl shadow-lg w-full max-w-sm mx-auto border border-gray-200 text-center">
+    <div id="deleteOutfitConfirmModal" class="modal-backdrop hidden">
+        <div class="modal-content delete">
             <h3 class="text-xl font-semibold text-gray-800 mb-4">Confirm Deletion</h3>
             <p class="text-gray-700 mb-6" id="deleteConfirmOutfitName"></p>
             <div class="flex justify-center space-x-4">
                 <button
                     type="button"
                     id="cancelDeleteOutfitBtn"
-                    class="py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                    class="btn-secondary"
                 >
                     Cancel
                 </button>
                 <button
                     type="button"
                     id="confirmDeleteOutfitBtn"
-                    class="py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    class="btn-red"
                 >
                     Delete
                 </button>
@@ -403,6 +454,7 @@
                 element.classList.add('bg-blue-100', 'text-blue-700');
             }
             element.classList.remove('hidden'); // Ensure message element is visible
+            element.classList.add('opacity-100'); // Add opacity for smooth transition
         }
 
         /**
@@ -410,7 +462,11 @@
          * @param {string} elementId - The ID of the HTML element to hide the message from.
          */
         function hideMessage(elementId) {
-            document.getElementById(elementId).classList.add('hidden');
+            const element = document.getElementById(elementId);
+            element.classList.remove('opacity-100'); // Start fade out
+            setTimeout(() => {
+                element.classList.add('hidden'); // Hide after transition
+            }, 300); // Match transition duration
         }
 
         /**
@@ -423,6 +479,34 @@
             button.disabled = isLoading; // Disable or enable the button
             // Change button text based on loading state and button type
             button.textContent = isLoading ? 'Loading...' : (buttonId === 'addItemBtn' ? 'Add Item' : (buttonId === 'updateItemBtn' ? 'Update Item' : (buttonId === 'createOutfitBtn' ? 'Create Outfit' : 'Update Outfit')));
+        }
+
+        /**
+         * Shows a modal with an animation.
+         * @param {string} modalId - The ID of the modal backdrop element.
+         * @param {string} contentId - The ID of the modal content element.
+         */
+        function showModal(modalId, contentId) {
+            const modal = document.getElementById(modalId);
+            const content = modal.querySelector('.modal-content'); // Get the actual content div
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.add('show'); // Trigger the fade-in and scale animation
+            }, 10); // Small delay to allow 'display: block' to register before animation
+        }
+
+        /**
+         * Hides a modal with an animation.
+         * @param {string} modalId - The ID of the modal backdrop element.
+         * @param {string} contentId - The ID of the modal content element.
+         */
+        function hideModal(modalId, contentId) {
+            const modal = document.getElementById(modalId);
+            const content = modal.querySelector('.modal-content'); // Get the actual content div
+            content.classList.remove('show'); // Trigger the fade-out and scale animation
+            setTimeout(() => {
+                modal.classList.add('hidden'); // Hide after transition
+            }, 300); // Match transition duration
         }
 
         /**
@@ -439,9 +523,18 @@
             }
 
             // Clear existing options (except the default "Select Type")
-            while (selectElement.children.length > 1) {
-                selectElement.removeChild(selectElement.lastChild);
+            // Ensure the first option remains, or re-add it if it was removed
+            const defaultOption = selectElement.querySelector('option[value=""]');
+            selectElement.innerHTML = ''; // Clear all
+            if (defaultOption) {
+                selectElement.appendChild(defaultOption); // Add default back
+            } else {
+                 const newDefault = document.createElement('option');
+                 newDefault.value = "";
+                 newDefault.textContent = "Select Type";
+                 selectElement.appendChild(newDefault);
             }
+
             // Add options from the clothingTypes array
             clothingTypes.forEach(type => {
                 const option = document.createElement('option');
@@ -460,6 +553,7 @@
         const imageUrlInput = document.getElementById('imageUrl');
         const addItemBtn = document.getElementById('addItemBtn');
         const clearFormBtn = document.getElementById('clearFormBtn');
+        const addMessage = document.getElementById('addMessage'); // Reference the message element
 
         // Event listener for adding a new clothing item
         addClothingForm.addEventListener('submit', (e) => {
@@ -545,31 +639,31 @@
          */
         function createClothingItemCard(item) {
             const card = document.createElement('div');
-            card.className = "border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col";
+            card.className = "card-base p-0 overflow-hidden"; // Apply card-base and remove default padding
             card.innerHTML = `
                 <div class="relative w-full h-48 bg-gray-100 flex items-center justify-center">
                     <img
                         src="${item.imageUrl}"
                         alt="${item.name}"
-                        class="w-full h-full object-cover rounded-t-lg"
+                        class="w-full h-full object-cover rounded-t-xl"
                         onerror="this.onerror=null;this.src='https://placehold.co/400x400/CCCCCC/333333?text=${item.name ? item.name.substring(0, 5) : 'Item'}';this.classList.add('p-4');"
                     />
                 </div>
                 <div class="p-4 flex-grow flex flex-col justify-between">
                     <div>
-                        <h3 class="text-lg font-medium text-gray-900 truncate">${item.name}</h3>
-                        <p class="text-sm text-gray-600">Type: <span class="font-semibold">${item.type}</span></p>
-                        <p class="text-sm text-gray-600">Color: <span class="font-semibold">${item.color}</span></p>
-                        <p class="text-xs text-gray-400 mt-1">Added: ${item.createdAt ? item.createdAt.toLocaleDateString() : 'N/A'}</p>
+                        <h3 class="text-lg font-medium text-gray-900 truncate mb-1">${item.name}</h3>
+                        <p class="text-sm text-gray-600">Type: <span class="font-semibold text-gray-800">${item.type}</span></p>
+                        <p class="text-sm text-gray-600">Color: <span class="font-semibold text-gray-800">${item.color}</span></p>
+                        <p class="text-xs text-gray-400 mt-2">Added: ${item.createdAt ? item.createdAt.toLocaleDateString() : 'N/A'}</p>
                         <p class="text-xs text-gray-400">Usage Count: ${item.usageCount}</p>
                     </div>
                     <div class="mt-4 flex space-x-2">
                         <button data-id="${item.id}"
-                                class="edit-btn flex-1 py-2 px-3 text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400">
+                                class="edit-btn btn-blue">
                             Edit
                         </button>
                         <button data-id="${item.id}" data-name="${item.name}"
-                                class="delete-btn flex-1 py-2 px-3 text-sm font-medium rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400">
+                                class="delete-btn btn-red">
                             Delete
                         </button>
                     </div>
@@ -600,6 +694,7 @@
         const editImageUrlInput = document.getElementById('editImageUrl');
         const updateItemBtn = document.getElementById('updateItemBtn');
         const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const editMessage = document.getElementById('editMessage');
 
         /**
          * Displays the edit modal and populates it with the selected item's data.
@@ -612,14 +707,14 @@
             editColorInput.value = itemData.color;
             editImageUrlInput.value = itemData.imageUrl;
             hideMessage('editMessage'); // Hide any previous messages in the modal
-            editItemModal.classList.remove('hidden'); // Show the modal
+            showModal('editItemModal', 'editItemModal'); // Use generalized modal show function
         }
 
         /**
          * Hides the edit item modal.
          */
         function hideEditModal() {
-            editItemModal.classList.add('hidden'); // Hide the modal
+            hideModal('editItemModal', 'editItemModal'); // Use generalized modal hide function
             hideMessage('editMessage'); // Hide any messages in the modal
         }
 
@@ -685,15 +780,15 @@
          */
         function showDeleteConfirm(itemId, itemName) {
             currentDeleteItem = itemId; // Store the ID of the item about to be deleted
-            deleteConfirmItemNameSpan.innerHTML = `Are you sure you want to delete <span class="font-semibold">"${itemName}"</span>?`;
-            deleteConfirmModal.classList.remove('hidden'); // Show the modal
+            deleteConfirmItemNameSpan.innerHTML = `Are you sure you want to delete <span class="font-semibold text-gray-900">"${itemName}"</span>?`;
+            showModal('deleteConfirmModal', 'deleteConfirmModal'); // Use generalized modal show function
         }
 
         /**
          * Hides the delete confirmation modal for clothing items.
          */
         function hideDeleteConfirm() {
-            deleteConfirmModal.classList.add('hidden'); // Hide the modal
+            hideModal('deleteConfirmModal', 'deleteConfirmModal'); // Use generalized modal hide function
             currentDeleteItem = null; // Clear the stored item ID
         }
 
@@ -782,11 +877,11 @@
             clothingItems.forEach(item => {
                 const isChecked = selectedItemIds.includes(item.id);
                 const itemDiv = document.createElement('div');
-                itemDiv.className = "flex items-center space-x-2 p-2 bg-white rounded-md shadow-sm border border-gray-200";
+                itemDiv.className = "flex items-center space-x-3 p-2 bg-white rounded-lg shadow-sm border border-gray-200 transition-shadow duration-200 hover:shadow-md";
                 itemDiv.innerHTML = `
-                    <input type="checkbox" id="outfit-item-${item.id}" value="${item.id}" class="form-checkbox h-4 w-4 text-purple-600 rounded" ${isChecked ? 'checked' : ''}>
-                    <label for="outfit-item-${item.id}" class="flex-1 text-sm font-medium text-gray-700 cursor-pointer flex items-center">
-                        <img src="${item.imageUrl}" alt="${item.name}" class="h-8 w-8 object-cover rounded-md mr-2"
+                    <input type="checkbox" id="${containerId}-item-${item.id}" value="${item.id}" class="form-checkbox h-5 w-5 text-purple-600 rounded-md">
+                    <label for="${containerId}-item-${item.id}" class="flex-1 text-sm font-medium text-gray-700 cursor-pointer flex items-center">
+                        <img src="${item.imageUrl}" alt="${item.name}" class="h-10 w-10 object-cover rounded-md mr-3 border border-gray-200"
                              onerror="this.onerror=null;this.src='https://placehold.co/40x40/DDDDDD/777777?text=';">
                         <span class="truncate">${item.name} (${item.color})</span>
                     </label>
@@ -802,14 +897,14 @@
             outfitNameInput.value = ''; // Clear name input
             populateOutfitItemSelection('outfitItemSelection'); // Populate checkboxes
             hideMessage('addOutfitMessage'); // Hide any messages
-            addOutfitModal.classList.remove('hidden'); // Show modal
+            showModal('addOutfitModal', 'addOutfitModal'); // Use generalized modal show function
         });
 
         /**
          * Hides the Add Outfit modal.
          */
         cancelAddOutfitBtn.addEventListener('click', () => {
-            addOutfitModal.classList.add('hidden');
+            hideModal('addOutfitModal', 'addOutfitModal');
             hideMessage('addOutfitMessage');
         });
 
@@ -848,8 +943,9 @@
                 renderOutfits(); // Re-render outfit list
                 showMessage('addOutfitMessage', 'Outfit created successfully!', 'success');
                 addOutfitForm.reset();
-                addOutfitModal.classList.add('hidden'); // Hide modal
-            } catch (error) {
+                hideModal('addOutfitModal', 'addOutfitModal'); // Hide modal
+            }
+            catch (error) {
                 console.error("Error creating outfit: ", error);
                 showMessage('addOutfitMessage', `Error creating outfit: ${error.message}`, 'error');
             } finally {
@@ -884,39 +980,39 @@
          */
         function createOutfitCard(outfit) {
             const card = document.createElement('div');
-            card.className = "border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col";
+            card.className = "card-base p-0 overflow-hidden"; // Apply card-base and remove default padding
 
             // Find items for outfit to display previews
             const outfitItems = outfit.itemIds.map(id => clothingItems.find(item => item.id === id)).filter(Boolean);
             const itemPreviewHtml = outfitItems.slice(0, 4).map(item => `
-                <img src="${item.imageUrl}" alt="${item.name}" class="h-10 w-10 object-cover rounded-full border border-gray-300"
+                <img src="${item.imageUrl}" alt="${item.name}" class="h-10 w-10 object-cover rounded-full border-2 border-gray-300 shadow-sm"
                      onerror="this.onerror=null;this.src='https://placehold.co/40x40/DDDDDD/777777?text=';">
             `).join('');
 
-            const moreItemsCount = outfitItems.length > 4 ? `+${outfitItems.length - 4} more` : '';
+            const moreItemsCount = outfitItems.length > 4 ? `<span class="text-xs font-semibold text-gray-600 flex items-center ml-1">+${outfitItems.length - 4} more</span>` : '';
 
             card.innerHTML = `
                 <div class="p-4 flex-grow flex flex-col justify-between">
                     <div>
-                        <h3 class="text-lg font-medium text-gray-900 truncate mb-2">${outfit.name}</h3>
-                        <div class="flex flex-wrap gap-1 mb-2">
+                        <h3 class="text-lg font-bold text-gray-900 mb-2 truncate">${outfit.name}</h3>
+                        <div class="flex flex-wrap items-center gap-1 mb-3">
                             ${itemPreviewHtml}
-                            ${moreItemsCount ? `<span class="text-xs text-gray-500 flex items-center">${moreItemsCount}</span>` : ''}
+                            ${moreItemsCount}
                         </div>
-                        <p class="text-xs text-gray-400 mt-1">Created: ${outfit.createdAt ? outfit.createdAt.toLocaleDateString() : 'N/A'}</p>
-                        <p class="text-xs text-gray-400">Items: ${outfit.itemIds.length}</p>
+                        <p class="text-xs text-gray-500 mt-1">Created: ${outfit.createdAt ? outfit.createdAt.toLocaleDateString() : 'N/A'}</p>
+                        <p class="text-xs text-gray-500">Items: ${outfit.itemIds.length}</p>
                     </div>
                     <div class="mt-4 flex space-x-2">
                         <button data-id="${outfit.id}"
-                                class="view-outfit-btn flex-1 py-2 px-3 text-sm font-medium rounded-md text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400">
+                                class="view-outfit-btn btn-green">
                             View
                         </button>
                         <button data-id="${outfit.id}"
-                                class="edit-outfit-btn flex-1 py-2 px-3 text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400">
+                                class="edit-outfit-btn btn-blue">
                             Edit
                         </button>
                         <button data-id="${outfit.id}" data-name="${outfit.name}"
-                                class="delete-outfit-btn flex-1 py-2 px-3 text-sm font-medium rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400">
+                                class="delete-outfit-btn btn-red">
                             Delete
                         </button>
                     </div>
@@ -924,188 +1020,4 @@
             `;
             card.querySelector('.view-outfit-btn').addEventListener('click', (e) => {
                 const outfitId = e.currentTarget.dataset.id;
-                const outfitToView = outfits.find(o => o.id === outfitId);
-                if (outfitToView) {
-                    showViewOutfitModal(outfitToView);
-                }
-            });
-            card.querySelector('.edit-outfit-btn').addEventListener('click', (e) => {
-                const outfitId = e.currentTarget.dataset.id;
-                const outfitToEdit = outfits.find(o => o.id === outfitId);
-                if (outfitToEdit) {
-                    showEditOutfitModal(outfitToEdit);
-                }
-            });
-            card.querySelector('.delete-outfit-btn').addEventListener('click', (e) => {
-                showDeleteOutfitConfirm(e.currentTarget.dataset.id, e.currentTarget.dataset.name);
-            });
-            return card;
-        }
-
-        /**
-         * Displays the View Outfit Details modal.
-         * @param {Object} outfit - The outfit object to display.
-         */
-        function showViewOutfitModal(outfit) {
-            viewOutfitName.textContent = outfit.name;
-            viewOutfitItemsContainer.innerHTML = ''; // Clear previous items
-
-            const outfitItems = outfit.itemIds.map(id => clothingItems.find(item => item.id === id)).filter(Boolean);
-
-            if (outfitItems.length === 0) {
-                viewOutfitItemsContainer.innerHTML = '<p class="text-gray-500 col-span-full text-center">No items found for this outfit (some items might have been deleted).</p>';
-            } else {
-                outfitItems.forEach(item => {
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = "flex flex-col items-center p-2 border border-gray-200 rounded-md shadow-sm";
-                    itemDiv.innerHTML = `
-                        <img src="${item.imageUrl}" alt="${item.name}" class="h-20 w-20 object-cover rounded-md mb-2"
-                             onerror="this.onerror=null;this.src='https://placehold.co/80x80/DDDDDD/777777?text=';">
-                        <span class="text-sm font-medium text-gray-800 truncate">${item.name}</span>
-                        <span class="text-xs text-gray-600">${item.type} | ${item.color}</span>
-                    `;
-                    viewOutfitItemsContainer.appendChild(itemDiv);
-                });
-            }
-            viewOutfitModal.classList.remove('hidden');
-        }
-
-        /**
-         * Hides the View Outfit Details modal.
-         */
-        closeViewOutfitBtn.addEventListener('click', () => {
-            viewOutfitModal.classList.add('hidden');
-        });
-
-        /**
-         * Displays the Edit Outfit modal.
-         * @param {Object} outfit - The outfit object to edit.
-         */
-        function showEditOutfitModal(outfit) {
-            editOutfitId.value = outfit.id;
-            editOutfitNameInput.value = outfit.name;
-            populateOutfitItemSelection('editOutfitItemSelection', outfit.itemIds); // Pre-select items
-            hideMessage('editOutfitMessage');
-            editOutfitModal.classList.remove('hidden');
-        }
-
-        /**
-         * Hides the Edit Outfit modal.
-         */
-        cancelEditOutfitBtn.addEventListener('click', () => {
-            editOutfitModal.classList.add('hidden');
-            hideMessage('editOutfitMessage');
-        });
-
-        /**
-         * Handles the submission of the Edit Outfit form.
-         */
-        editOutfitForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-
-            const id = editOutfitId.value;
-            const outfitName = editOutfitNameInput.value.trim();
-            const selectedItems = Array.from(editOutfitItemSelection.querySelectorAll('input[type="checkbox"]:checked'))
-                                      .map(checkbox => checkbox.value);
-
-            if (!outfitName) {
-                showMessage('editOutfitMessage', 'Please enter an outfit name.', 'error');
-                return;
-            }
-            if (selectedItems.length === 0) {
-                showMessage('editOutfitMessage', 'Please select at least one clothing item for the outfit.', 'error');
-                return;
-            }
-
-            setButtonLoading('updateOutfitBtn', true);
-            hideMessage('editOutfitMessage');
-
-            try {
-                outfits = outfits.map(outfit => {
-                    if (outfit.id === id) {
-                        return {
-                            ...outfit,
-                            name: outfitName,
-                            itemIds: selectedItems
-                        };
-                    }
-                    return outfit;
-                });
-                renderOutfits();
-                showMessage('editOutfitMessage', 'Outfit updated successfully!', 'success');
-                editOutfitModal.classList.add('hidden'); // Hide modal
-            } catch (error) {
-                console.error("Error updating outfit: ", error);
-                showMessage('editOutfitMessage', `Error updating outfit: ${error.message}`, 'error');
-            } finally {
-                setButtonLoading('updateOutfitBtn', false);
-            }
-        });
-
-        /**
-         * Displays the delete confirmation modal for an outfit.
-         * @param {string} outfitId - The ID of the outfit to be deleted.
-         * @param {string} outfitName - The name of the outfit to be deleted, for display in the modal.
-         */
-        function showDeleteOutfitConfirm(outfitId, outfitName) {
-            currentDeleteOutfit = outfitId;
-            deleteConfirmOutfitNameSpan.innerHTML = `Are you sure you want to delete <span class="font-semibold">"${outfitName}"</span>?`;
-            deleteOutfitConfirmModal.classList.remove('hidden');
-        }
-
-        /**
-         * Hides the delete confirmation modal for outfits.
-         */
-        cancelDeleteOutfitBtn.addEventListener('click', () => {
-            deleteOutfitConfirmModal.classList.add('hidden');
-            currentDeleteOutfit = null;
-        });
-
-        /**
-         * Handles the confirmation of outfit deletion.
-         */
-        confirmDeleteOutfitBtn.addEventListener('click', () => {
-            if (!currentDeleteOutfit) return;
-
-            try {
-                outfits = outfits.filter(outfit => outfit.id !== currentDeleteOutfit);
-                renderOutfits();
-                showMessage('outfitsMessage', 'Outfit deleted successfully!', 'success');
-            } catch (error) {
-                console.error("Error deleting outfit: ", error);
-                showMessage('outfitsMessage', `Error deleting outfit: ${error.message}`, 'error');
-            } finally {
-                deleteOutfitConfirmModal.classList.add('hidden');
-                currentDeleteOutfit = null;
-            }
-        });
-
-
-        // --- Initialization ---
-
-        /**
-         * Initializes the application when the window loads.
-         * Populates dropdowns and renders initial clothing items and outfits.
-         */
-        function initApp() {
-            console.log("Digital Closet Debug: initApp started.");
-            // Generate a mock user ID and display it
-            userId = crypto.randomUUID();
-            document.getElementById('actualUserId').textContent = userId;
-            document.getElementById('userIdDisplay').classList.remove('hidden');
-
-            // Populate type dropdowns for both add and edit forms
-            populateTypeSelect('type');
-            populateTypeSelect('editType');
-
-            // Initial render of clothing items (will be empty initially)
-            renderClothingItems();
-            // Initial render of outfits (will be empty initially)
-            renderOutfits();
-        }
-
-        // Attach the initialization function to the window's load event
-        window.onload = initApp;
-    </script>
-</body>
-</html>
+                const outfitToView = outfits.find(o => o.id === outfi
